@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:store_app/screens/home_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(StoreApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
+class StoreApp extends StatelessWidget {
   Widget build(BuildContext context) {
-    return MaterialApp();
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      routes: {
+        HomePage.id: (context) => HomePage(),
+      },
+      initialRoute: HomePage.id,
+    );
   }
 }
