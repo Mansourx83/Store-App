@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-class MyFormTextField extends StatelessWidget {
-  MyFormTextField({
+class MyTextField extends StatelessWidget {
+  MyTextField({
     super.key,
     required this.hint,
     this.onCahnged,
     this.iconButton,
     this.obscureText = false,
     this.isPassword = false,
+    this.typeOfText,
   });
 
   final String hint;
@@ -15,19 +16,21 @@ class MyFormTextField extends StatelessWidget {
   final IconButton? iconButton;
   final bool obscureText;
   final bool isPassword;
+  final TextInputType? typeOfText;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(14),
-      child: TextFormField(
+      child: TextField(
         obscureText: isPassword ? obscureText : false,
-        validator: (data) {
-          if (data!.isEmpty) {
-            return 'Field is required';
-          }
-          return null;
-        },
+        keyboardType: typeOfText,
+        // validator: (data) {
+        //   if (data!.isEmpty) {
+        //     return 'Field is required';
+        //   }
+        //   return null;
+        // },
         cursorErrorColor: Colors.red,
         onChanged: onCahnged,
         style: const TextStyle(),
