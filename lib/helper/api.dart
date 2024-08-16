@@ -1,23 +1,20 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Api {
   Future<dynamic> get({
     required String url,
-    @required String? token,
+    String? token,
   }) async {
     final Map<String, String> headers = {};
-    if (token != Null) {
-      headers.addAll({
-        "Authorization": "Bearer $token",
-      });
+    if (token != null) {
+      headers["Authorization"] = "Bearer $token";
     }
+    print('url = $url token = $token');
+
     try {
-      http.Response response = await http.get(
-        Uri.parse(url),
-        headers: headers,
-      );
+      http.Response response = await http.get(Uri.parse(url), headers: headers);
+      print('Response body: ${response.body}');
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
@@ -31,26 +28,28 @@ class Api {
 
   Future<dynamic> post({
     required String url,
-    @required Map<String, dynamic>? body,
-    @required String? token,
+    Map<String, dynamic>? body,
+    String? token,
   }) async {
-    final Map<String, String> headers = {};
-    if (token != Null) {
-      headers.addAll({
-        "Authorization": "Bearer $token",
-      });
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json', // Use JSON if the server expects it
+    };
+    if (token != null) {
+      headers["Authorization"] = "Bearer $token";
     }
+    print('url = $url body = $body token = $token');
+
     try {
       http.Response response = await http.post(
         Uri.parse(url),
-        body: body,
+        body: jsonEncode(body), // Encode body as JSON
         headers: headers,
       );
+      print('Response body: ${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         return jsonDecode(response.body);
       } else {
-        throw Exception(
-            'Problem with status code: ${response.statusCode} , with body ${jsonDecode(response.body)}');
+        throw Exception('Problem with status code: ${response.statusCode}');
       }
     } catch (e) {
       print('Error in POST request: $e');
@@ -60,33 +59,32 @@ class Api {
 
   Future<dynamic> put({
     required String url,
-    @required Map<String, dynamic>? body,
-    @required String? token,
+    Map<String, dynamic>? body,
+    String? token,
   }) async {
-    final Map<String, String> headers = {};
-    headers.addAll({
-      'Content-Type': 'application/x-www-form-urlencoded',
-    });
-    if (token != Null) {
-      headers.addAll({
-        "Authorization": "Bearer $token",
-      });
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json', // Use JSON if the server expects it
+    };
+    if (token != null) {
+      headers["Authorization"] = "Bearer $token";
     }
+    print('url = $url body = $body token = $token');
+
     try {
-      http.Response response = await http.post(
+      http.Response response = await http.put(
         Uri.parse(url),
-        body: body,
+        body: jsonEncode(body), // Encode body as JSON
         headers: headers,
       );
+      print('Response body: ${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         return jsonDecode(response.body);
       } else {
-        throw Exception(
-            'Problem with status code: ${response.statusCode} , with body ${jsonDecode(response.body)}');
+        throw Exception('Problem with status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error in POST request: $e');
-      throw Exception('Failed to create data');
+      print('Error in PUT request: $e');
+      throw Exception('Failed to update data');
     }
   }
 }

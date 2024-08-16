@@ -5,28 +5,40 @@ class ProductModel {
   final String description;
   final String image;
   final String category;
-  final RatingModel rating;
+  final RatingModel? rating;
 
-  ProductModel(
-      {required this.id,
-      required this.title,
-      required this.price,
-      required this.description,
-      required this.image,
-      required this.rating,
-      required this.category});
+  ProductModel({
+    required this.id,
+    required this.title,
+    required this.price,
+    required this.description,
+    required this.image,
+    required this.category,
+    this.rating,
+  });
 
   factory ProductModel.fromJson(Map<String, dynamic> jsonData) {
     return ProductModel(
       id: jsonData['id'] as int,
       title: jsonData['title'] as String,
-      price:
-          (jsonData['price'] as num).toDouble(), // Ensure 'price' is a double
+      price: _convertToDouble(jsonData['price']),
       description: jsonData['description'] as String,
       image: jsonData['image'] as String,
       category: jsonData['category'] as String,
-      rating: RatingModel.fromJson(jsonData['rating'] as Map<String, dynamic>),
+      rating: jsonData['rating'] != null
+          ? RatingModel.fromJson(jsonData['rating'] as Map<String, dynamic>)
+          : null,
     );
+  }
+
+  static double _convertToDouble(dynamic value) {
+    if (value is String) {
+      return double.tryParse(value) ?? 0.0;
+    } else if (value is num) {
+      return value.toDouble();
+    } else {
+      throw ArgumentError('Cannot convert $value to double');
+    }
   }
 }
 
@@ -38,7 +50,7 @@ class RatingModel {
 
   factory RatingModel.fromJson(Map<String, dynamic> jsonData) {
     return RatingModel(
-      rate: (jsonData['rate'] as num).toDouble(), // Ensure 'rate' is a double
+      rate: ProductModel._convertToDouble(jsonData['rate']),
       count: jsonData['count'] as int,
     );
   }

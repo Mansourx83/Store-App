@@ -16,6 +16,7 @@ class UpdateProductPage extends StatefulWidget {
 class _UpdateProductPageState extends State<UpdateProductPage> {
   String? productName, description, image, price;
   bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     ProductModel product =
@@ -47,7 +48,6 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
               MyTextField(
                 hint: 'Price',
                 onCahnged: (data) {
-                  // price = int.parse(data);
                   price = data;
                 },
                 typeOfText: TextInputType.number,
@@ -59,12 +59,12 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
                 },
               ),
               MyButton(
-                  text: 'Updata',
-                  function: () {
+                  text: 'Update',
+                  function: () async {
                     isLoading = true;
                     setState(() {});
                     try {
-                      updateproduct(product);
+                      await updateProduct(product);
                       showBar(context,
                           text: 'Success Update', color: Colors.green);
                     } catch (e) {
@@ -82,13 +82,14 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
     );
   }
 
-  void updateproduct(ProductModel product) {
-    UpdateProduct().updateProduct(
-      title: productName!,
-      price: price!,
-      description: description!,
-      image: image!,
+  Future<void> updateProduct(ProductModel product) async {
+    await UpdateProduct().updateProduct(
+      title: productName == null ? product.title : productName!,
+      price: price == null ? product.price.toString() : price!,
+      description: description == null ? product.description : description!,
+      image: image == null ? product.image : image!,
       category: product.category,
+      id: product.id,
     );
   }
 }
